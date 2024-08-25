@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<style>
+    body{
+        background-color: #121213;
+    }
+    .win{
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        height: 20px;
+        width: 80px;
+        padding: 2px;
+        background-color: white;
+        margin: auto;
+        color:black;
+        font-weight: bold;
+        font-family: "Clear Sans","Helvetica Neue",Arial,sans-serif;
+    }
+    .grid-container{
+        display:grid;
+        margin:auto;
+        align-items: center;
+        width: 350px;
+        height: 420px;
+        grid-template-rows: repeat(6,1fr);
+        grid-template-columns: repeat(5,1fr);
+        grid-gap: 5px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    .grid-container > div{
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        vertical-align: middle;
+        align-items: center;
+        border: 2px solid #565758;
+        display: inline-flex;
+        font-size: 2rem;
+        line-height: 32px;
+        justify-content: center;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-family: "Clear Sans","Helvetica Neue",Arial,sans-serif;
+        
+    }
+    .keyboard{
+        display:grid
+    }
+
+</style>
+<title>
+    Wordle
+</title>
+
+<body>
+    <div class="win" id='winbox'>
+    </div>
+    <div class="grid-container">
+        <!--first row-->
+        <div id='box-1'>
+        </div>
+        <div id='box-2'>
+        </div>
+        <div id="box-3">
+        </div>
+        <div id="box-4">
+        </div>
+        <div id="box-5">
+        </div>
+        <!--second row-->
+        <div id="box-6">
+        </div>
+        <div id="box-7">
+        </div>
+        <div id="box-8">
+        </div>
+        <div id="box-9">
+        </div>
+        <div id="box-10">
+        </div>
+        <!--third row-->
+        <div id="box-11">
+        </div>
+        <div id="box-12">
+        </div>
+        <div id="box-13">
+        </div>
+        <div id="box-14">
+        </div>
+        <div id="box-15">
+        </div>
+        <!--fourth row-->
+        <div id="box-16">
+        </div>
+        <div id="box-17">
+        </div>
+        <div id="box-18">
+        </div>
+        <div id="box-19">
+        </div>
+        <div id="box-20">
+        </div>
+        <!--fifth row-->
+        <div id="box-21">
+        </div>
+        <div id="box-22">
+        </div>
+        <div id="box-23">
+        </div>
+        <div id="box-24">
+        </div>
+        <div id="box-25">
+        </div>
+        <!--sixth row-->
+        <div id="box-26">
+        </div>
+        <div id="box-27">
+        </div>
+        <div id="box-28">
+        </div>
+        <div id="box-29">
+        </div>
+        <div id="box-30">
+        </div>
+    </div>
+    <div class="keyboard">
+        <div></div>
+    </div>
+    
+
+</body>
+<script src='external.js'>
+</script>
+<script>
+    const boxes = ["box-1","box-2","box-3","box-4","box-5","box-6","box-7","box-8","box-9","box-10",
+    "box-11","box-12","box-13","box-14","box-15","box-16","box-17","box-18","box-19","box-20","box-21",
+    "box-22","box-23","box-24","box-25","box-26","box-27","box-28","box-29","box-30"]
+    const guessindex = Math.floor(Math.random() * (wordlist.length + 1))
+    console.log('guess index: ' + guessindex)
+    let i = 0;
+    let enterClicked = false;
+    let isvalid = true;
+    let lowerlimit = 0;
+    //
+    function win(guess,i){
+        console.log('Win!')
+        solution = wordlist[guessindex].split('')
+        for(x=0;x<5;x++){
+            if (solution[x] != guess[x]){
+                return false;
+            }
+        }
+        for (y=0;y<5;y++){
+            document.getElementById(boxes[i-5+y]).style.backgroundColor = '#538d4e' //green
+        }
+    }
+    function hints(guess,i){
+        solution = wordlist[guessindex].split('')
+        console.log('Solution: ' + solution)
+        let hints = ['','','','','']
+        for (x=0;x<5;x++){
+            if (solution[x] == guess[x]){
+                console.log('i: ',i)
+                console.log('x: ',x)
+                document.getElementById(boxes[i-5+x]).style.backgroundColor = '#538d4e' //green
+                console.log(guess[x],  " is green") 
+                guess[x] = '1'
+                solution[x] = '2'
+            }
+        }
+        for (x=0;x<5;x++){
+            for (y=0;y<5;y++){
+                if(solution[y] == guess[x] && x != y && solution[x] != solution[y])
+                {
+                    document.getElementById(boxes[i-5+x]).style.backgroundColor = '#b59f3b' //yellow
+                    console.log(guess[x], "is yellow")
+                    guess[x] = '1'
+                    solution[y] = '2'
+                }  
+            }
+        } 
+    }
+    //
+    function checklowerlimit(index){
+        console.log('index: ' + index + 'lowerlimit: ' + lowerlimit)
+        if (index == lowerlimit){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    function limit(index){
+        if ((index) % 5 == 0 && i != 0 && enterClicked==false){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    function isGuessValid(guess){
+        for(y=0;y<wordlist.length;y++){
+            isvalid = true;
+            for(x=0;x<5;x++)
+            {
+                if (guess[x] != wordlist[y].split('')[x])
+                {
+                    isvalid = false;
+                    break;
+                }
+            }
+            if (isvalid != false){
+                //console.log('lowerlimit is' + lowerlimit)
+                lowerlimit += 5;
+                isvalid = true
+                return;
+            }
+        }
+        console.log("Incorrect guess, lowerlimit: " + lowerlimit)
+
+        
+    }
+    //key listener
+    document.addEventListener('keydown', KeyCheck);
+    function KeyCheck(event)
+    {
+        var name = event.key
+        console.log(name)
+        //console.log('index: ' + i)
+        if (limit(i) == true){
+            if(name == 'Enter'){
+                console.log('index at enter:' + i)
+                var guess = []
+                for(x=5;x>0;x--)
+                {
+                    guess.push(document.getElementById(boxes[i-x]).innerHTML)
+                    
+                }
+                console.log('guess: ' + guess)
+                enterClicked=true;
+                isGuessValid(guess)
+                if (isvalid == true){
+                        if (win(guess,i) == false)
+                    {
+                        hints(guess,i)
+                    }
+                    else{
+                        document.getElementById('winbox').style.display = 'flex';
+                        document.getElementById('winbox').innerHTML = 'good job'
+                        console.log("hooray!")
+                        document.removeEventListener('keydown', KeyCheck);
+                    }
+                }
+                
+            }
+        }
+        if (/^[a-zA-Z]+$/.test(name) == true && i < 30 && name.length == 1 && limit(i) == false && isvalid == true){
+            document.getElementById(boxes[i]).innerHTML = name;
+            i++;
+            enterClicked=false;
+        }
+        else if (name == 'Backspace' && i != 0 && checklowerlimit(i) == false){
+            enterClicked=true;
+            isvalid = true;
+            i--
+            console.log('index at backspace:' + i)
+            document.getElementById(boxes[i]).textContent = '';
+
+        }
+    }
+   
+</script>
